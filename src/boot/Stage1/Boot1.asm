@@ -1,12 +1,12 @@
 
-org		0x7c00					; we will set regisers later
+; org		0x7c00					; we will set regisers later
 
 bits	16						; we are in 16 bit real mode
 
 STAGE2_ADDR equ 0x07e0
 
-
-start:
+global _start
+_start:
 	jmp	main					; jump to start of bootloader
 
 
@@ -61,8 +61,8 @@ main:
 	call Print
 
 	jmp load_stage2
-
-
+	cli
+	hlt
 
 ;*************************************************;
 ;	Includes Section

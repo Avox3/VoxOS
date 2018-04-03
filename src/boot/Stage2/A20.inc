@@ -57,7 +57,6 @@ check_A20_exit:
 
     ret
 
-
 ; wait for input buffer to be clear
 wait_input:
   in      al,0x64		; read status register
@@ -82,8 +81,9 @@ enable_A20:
 
   ; fast method of enabling
   ; but not a portable method, it's not gonna work with all hardwares
-  mov	al, 2	; set bit 2 (enable a20)
-  out	0x92, al
+  in al, 0x92
+  or al, 2
+  out 0x92, al
 
   ; check if enabling a20 succeed
   call check_A20

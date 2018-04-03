@@ -1,15 +1,18 @@
-# create bootloader image file
-dd if=/dev/zero of=disk.img bs=1024 count=720
-# assemble stage 1
-nasm -f bin src/boot/Stage1/Boot1.asm -o bootload.bin
-dd if=bootload.bin of=disk.img conv=notrunc
 
-# assemble stage 1
-nasm -f bin src/boot/Stage2/Stage2.asm -o stage2.bin
-dd if=stage2.bin of=disk.img bs=512 seek=1 conv=notrunc
+# compile bootloader
+nasm -g -f elf32 -F dwarf -o boot.o src/boot/Stage2/Stage2.asm
+ld -melf_i386 -Ttext=0x7c00 -nostdlib --nmagic -o boot.elf boot.o
+objcopy -O binary boot.elf boot.bin
 
-# delete bin files
-rm bootload.bin stage2.bin
+# compile and link kernel
+gcc -g -m32 -c -ffreestanding -o kernel.o src/kernel/kernel.c -lgcc
+ld -melf_i386 -T src/linker.ld -nostdlib --nmagic -o kernel.elf kernel.o
+objcopy -O binary kernel.elf kernel.bin
+
+# build disk image
+dd if=/dev/zero of=disk.img bs=512 count=2880
+dd if=boot.bin of=disk.img bs=512 conv=notrunc
+dd if=kernel.bin of=disk.img bs=512 seek=1 conv=notrunc
 
 # run on qemu emulator
 qemu-system-i386 -fda disk.img
