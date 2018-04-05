@@ -66,9 +66,9 @@ disk_error:
 ;*************************************************;
 ;	Includes Section
 ;************************************************;
-%include 'src/boot/Others/utils.inc'
-%include 'src/boot/Stage2/A20.inc'
-%include 'src/boot/Stage2/Gdt.inc'
+%include 'boot/Others/utils.inc'
+%include 'boot/Stage2/A20.inc'
+%include 'boot/Stage2/Gdt.inc'
 
 ;*************************************************;
 ;	Data Section
