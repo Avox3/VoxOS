@@ -122,6 +122,5 @@ enable_A20:
   out     0x60, al
 
   enable_A20_success:
-    mov si, A20_success
-    call Print
+
     ret

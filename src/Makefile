@@ -1,6 +1,12 @@
+C_SOURCES = $(wildcard drivers/*.c)
+HEADERS = $(wildcard drivers/*.h)
+OBJS = $(C_SOURCES:.c=.o)
+TARGET = disk.img
+
+CFLAGS = -g -m32
+CC = gcc
 
 all: run
-
 
 boot.bin: boot/Stage2/Stage2.asm
 	nasm -g -f elf32 -F dwarf -o $@ $<
@@ -9,23 +15,27 @@ boot.bin: boot/Stage2/Stage2.asm
 
 
 kernel.o:
-	gcc -g -m32 -c -ffreestanding -o $@ kernel/kernel.c -lgcc
+	${CC} ${CFLAGS} -c -ffreestanding -o $@ kernel/kernel.c -lgcc
 
 
-kernel.bin: kernel.o
-	ld -melf_i386 -T linker.ld -nostdlib --nmagic -o kernel.elf $<
+kernel.bin: kernel.o $(OBJS)
+	ld -melf_i386 -Tlinker.ld -nostdlib --nmagic -o kernel.elf $^
 	objcopy -O binary kernel.elf $@
 
 
-disk.img: boot.bin kernel.bin
-	dd if=/dev/zero of=disk.img bs=512 count=2880
-	dd if=boot.bin of=disk.img bs=512 conv=notrunc
-	dd if=kernel.bin of=disk.img bs=512 seek=1 conv=notrunc
+$(TARGET): boot.bin kernel.bin
+	dd if=/dev/zero of=$@ bs=512 count=2880
+	dd if=boot.bin of=$@ bs=512 conv=notrunc
+	dd if=kernel.bin of=$@ bs=512 seek=1 conv=notrunc
 
-
-run: disk.img clean
+run: $(TARGET)
 	qemu-system-i386 -fda $<
 
+# create the object files
+%.o: %.c $(HEADERS)
+	${CC} ${CFLAGS} -ffreestanding -c $< -o $@ -lgcc
 
 clean:
-	rm *.bin *.o *.elf
+	rm *.bin *.o *.elf drivers/*.o kernel/*.o
+
+.PHONY : all clean
