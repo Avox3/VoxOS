@@ -7,7 +7,6 @@ void kmain(void)
 
 	clear();
 	kprint(str);
-
 	// halt the system
 	return;
 }

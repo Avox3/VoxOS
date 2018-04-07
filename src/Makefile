@@ -36,6 +36,6 @@ run: $(TARGET)
 	${CC} ${CFLAGS} -ffreestanding -c $< -o $@ -lgcc
 
 clean:
-	rm *.bin *.o *.elf drivers/*.o kernel/*.o
+	rm *.bin *.o *.elf drivers/*.o
 
 .PHONY : all clean
