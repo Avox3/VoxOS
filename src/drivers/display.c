@@ -24,10 +24,13 @@ void update_cursor(int x, int y)
 {
 	u16int pos = y * SCREEN_COLUMNS + x;
 
+
 	outb(0x3D4, 14);  // Tell the VGA board we are setting the high cursor byte.
 	outb(0x3D5, (u8int) (pos & 0xFF));  // Send the high cursor byte.
 	outb(0x3D4, 15);  // Tell the VGA board we are setting the low cursor byte.
 	outb(0x3D5, (u8int) ((pos >> 8) & 0xFF));  // Send the low cursor byte.
+  cursor_x = x;
+  cursor_y = y;
 }
 
 // clear the screen, write spaces to the screen's framebuffer

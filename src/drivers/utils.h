@@ -33,5 +33,6 @@ typedef          short s16int;
 typedef unsigned char  u8int;
 typedef          char  s8int;
 
+void int_to_ascii(u8int val, char str[], u8int len);
 
 #endif

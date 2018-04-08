@@ -1,6 +1,6 @@
-C_SOURCES = $(wildcard drivers/*.c)
-HEADERS = $(wildcard drivers/*.h)
-OBJS = $(C_SOURCES:.c=.o)
+C_SOURCES = $(wildcard drivers/*.c kernel/interrupts/*.c)
+HEADERS = $(wildcard drivers/*.h kernel/interrupts/*.h)
+OBJS = $(C_SOURCES:.c=.o kernel/interrupts/interrupt.o)
 TARGET = disk.img
 
 CFLAGS = -g -m32
@@ -35,7 +35,10 @@ run: $(TARGET)
 %.o: %.c $(HEADERS)
 	${CC} ${CFLAGS} -ffreestanding -c $< -o $@ -lgcc
 
+%.o: %.asm
+	nasm $< -f elf -o $@
+
 clean:
-	rm *.bin *.o *.elf drivers/*.o
+	rm *.bin *.o *.elf drivers/*.o kernel/interrupts/*.o
 
 .PHONY : all clean
