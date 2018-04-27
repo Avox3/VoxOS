@@ -45,8 +45,12 @@ typedef struct {
     u32int eip, cs, eflags, useresp, ss; // pushed by the processor automatically
 } registers_t;
 
+typedef void (*isr_t)(registers_t);
 void isr_install();
+void register_int_handler(u8int n, isr_t handler);
 void isr_handler(registers_t r);
 void install_int_handlers();
+
+isr_t interrupt_handlers[256];
 
 #endif
