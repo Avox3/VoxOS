@@ -4,14 +4,16 @@
 
 void kmain(void)
 {
-	char *str = "Welcom to VoxOS";
-	settextcolor(WHITE, LIGHT_BLUE);
+	char *str = "Welcom to VoxOS\n";
+
+	// initialize IDT
+	idt_initialize();
+	// enable interrupts
+	asm volatile("sti");
+
+	// display output
 	clear();
 	kprint(str);
 
-	// set up the interrupt descriptor table
-	idt_initialize();
-
-	// halt the system
 	return;
 }

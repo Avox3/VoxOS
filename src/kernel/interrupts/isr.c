@@ -3,6 +3,9 @@
 #include "../../drivers/display.h"
 
 
+isr_t interrupt_handlers[256];
+
+
 // interrupt handlers' messages
 char *exception_messages[] = {
     "Division By Zero",
@@ -58,6 +61,12 @@ void install_int_handlers()
     {
       idt_set_ir(i, isrs[i]);
     }
+}
+
+isr_t get_int_handler(u8int n)
+{
+    if (n == 0) return 0;
+    return interrupt_handlers[n];
 }
 
 void register_int_handler(u8int n, isr_t handler)

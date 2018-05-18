@@ -20,3 +20,11 @@ u8int inb(u16int port)
                    : "Nd"(port) );
     return ret;
 }
+
+
+void io_wait()
+{
+    asm volatile ( "jmp 1f\n\t"
+                   "1:jmp 2f\n\t"
+                   "2:" );
+}

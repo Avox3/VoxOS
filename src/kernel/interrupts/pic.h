@@ -51,5 +51,6 @@ extern void irq15();
 
 void pic_initialize();
 void irq_handler(registers_t r);
+void irq_install_handler(int irq, isr_t handler);
 
 #endif

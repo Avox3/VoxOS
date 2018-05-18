@@ -33,6 +33,14 @@ typedef          short s16int;
 typedef unsigned char  u8int;
 typedef          char  s8int;
 
+// struct which aggregates many registers
+typedef struct {
+    u32int ds; // data segment selector
+    u32int edi, esi, ebp, esp, ebx, edx, ecx, eax; // pusha registers
+    u32int int_no, err_code; // interrupt number and error code (if applicable)
+    u32int eip, cs, eflags, useresp, ss; // pushed by the processor automatically
+} registers_t;
+
 void int_to_ascii(u8int val, char str[], u8int len);
 
 #endif

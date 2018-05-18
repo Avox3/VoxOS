@@ -1,6 +1,7 @@
 // IDT - Interrupt Descriptor Table
 #include "idt.h"
 #include "isr.h"
+#include "pic.h"
 
 
 // all IDT enteries
@@ -22,6 +23,7 @@ void idt_set_ir(u8int num, u32int base)
 void idt_load()
 {
     __asm__ __volatile__("lidtl (%0)" : : "r" (&idtp));
+    __asm__ __volatile__ ("sti");
 }
 
 // install and load the IDT
@@ -33,7 +35,8 @@ void idt_initialize()
 
     // install isrs
     install_int_handlers();
-
+    // install iqrs
+    pic_initialize();
     // load the interrupt descriptor table
     idt_load();
 }

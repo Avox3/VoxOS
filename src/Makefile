@@ -1,6 +1,6 @@
 C_SOURCES = $(wildcard drivers/*.c kernel/interrupts/*.c)
 HEADERS = $(wildcard drivers/*.h kernel/interrupts/*.h)
-OBJS = $(C_SOURCES:.c=.o kernel/interrupts/interrupt.o)
+OBJS = $(C_SOURCES:.c=.o kernel/interrupts/interrupt.o kernel/interrupts/irqs.o)
 TARGET = disk.img
 
 CFLAGS = -g -m32

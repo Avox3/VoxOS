@@ -37,20 +37,12 @@ extern void isr29();
 extern void isr30();
 extern void isr31();
 
-// struct which aggregates many registers
-typedef struct {
-    u32int ds; // data segment selector
-    u32int edi, esi, ebp, esp, ebx, edx, ecx, eax; // pusha registers
-    u32int int_no, err_code; // interrupt number and error code (if applicable)
-    u32int eip, cs, eflags, useresp, ss; // pushed by the processor automatically
-} registers_t;
 
-typedef void (*isr_t)(registers_t);
+typedef void (*isr_t)(registers_t r);
 void isr_install();
 void register_int_handler(u8int n, isr_t handler);
 void isr_handler(registers_t r);
 void install_int_handlers();
-
-isr_t interrupt_handlers[256];
+isr_t get_int_handler(u8int n);
 
 #endif
