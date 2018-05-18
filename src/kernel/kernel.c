@@ -1,19 +1,24 @@
 
 #include "../drivers/display.h"
+#include "../drivers/keyboard.h"
 #include "interrupts/idt.h"
 
 void kmain(void)
 {
-	char *str = "Welcom to VoxOS\n";
+	char *str = "Welcom to VoxOS\n\n";
 
-	// initialize IDT
+	// install IDT
 	idt_initialize();
 	// enable interrupts
-	asm volatile("sti");
+	__asm__ __volatile__ ("sti");
 
-	// display output
+	// initialize drivers
+	initialize_keyboard();
+
+	// welcome screen
 	clear();
 	kprint(str);
 
-	return;
+	for (;;);
+
 }

@@ -23,7 +23,6 @@ void idt_set_ir(u8int num, u32int base)
 void idt_load()
 {
     __asm__ __volatile__("lidtl (%0)" : : "r" (&idtp));
-    __asm__ __volatile__ ("sti");
 }
 
 // install and load the IDT

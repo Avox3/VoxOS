@@ -37,7 +37,6 @@ extern void isr29();
 extern void isr30();
 extern void isr31();
 
-
 typedef void (*isr_t)(registers_t r);
 void isr_install();
 void register_int_handler(u8int n, isr_t handler);

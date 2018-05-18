@@ -3,14 +3,20 @@
 #include "../../drivers/ports.h"
 
 
-
-u32int irqs[IMPLEMENTED_IRQS    ] = {
+u32int irqs[IMPLEMENTED_IRQS] = {
   (u32int)irq0, (u32int)irq1, (u32int)irq2, (u32int)irq3,
   (u32int)irq4, (u32int)irq5, (u32int)irq6, (u32int)irq7,
   (u32int)irq8, (u32int)irq9, (u32int)irq10, (u32int)irq11,
   (u32int)irq12, (u32int)irq13, (u32int)irq14, (u32int)irq15
 };
 
+/* This array is actually an array of function pointers. We use
+*  this to handle custom IRQ handlers for a given IRQ */
+void *irq_routines[16] =
+{
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0
+};
 
 // send end of interrupt, insure all hardware interrupts are enabled at the end
 void send_EOI(u8int PICx)
@@ -18,27 +24,66 @@ void send_EOI(u8int PICx)
   outb(PICx, PIC_EOI);
 }
 
+void disable_irq(unsigned char irq) {
+    u16int port;
+    u8int value;
+
+    if(irq < 8) {
+        port = PIC1_DATA;
+    } else {
+        port = PIC2_DATA;
+        irq -= 8;
+    }
+    value = inb(port) | (1 << irq);
+    outb(port, value);
+}
+
+void enable_irq(unsigned char irq) {
+    u16int port;
+    u8int value;
+
+    if(irq < 8) {
+        port = PIC1_DATA;
+    } else {
+        port = PIC2_DATA;
+        irq -= 8;
+    }
+    value = inb(port) & ~(1 << irq);
+    outb(port, value);
+}
+
+void register_irq_handler(int irq, isr_t handler)
+{
+    irq_routines[irq] = handler;
+}
+
+void unregister_irq_handler(u8int irq)
+{
+    irq_routines[irq] = 0;
+}
 
 // this function handles the interrupts, called from ASM interrupt handler stub
 void irq_handler(registers_t r) {
 
-  if(r.int_no >= 40)
-  {
-    // send EOI - reset signal to the secondrary PIC
-    send_EOI(PIC2);
-  }
-  // send EOI - reset signal to the primary PIC
-  send_EOI(PIC1);
+    // char *s = itoa(r.int_no, 10);
+    // kprint(s);
 
-  isr_t handler = get_int_handler(r.int_no);
+    if(r.int_no >= 40)
+    {
+        // send EOI - reset signal to the secondrary PIC
+        send_EOI(PIC2);
+    }
+    // send EOI - reset signal to the primary PIC
+    send_EOI(PIC1);
 
-  if(handler != 0)  // check if there is an handler to the interrupt
-  {
-    handler(r);
-  }
+    isr_t handler = irq_routines[r.int_no];
+
+    if(handler != 0)  // check if there is an handler to the interrupt
+    {
+        handler(r);
+    }
 
 }
-
 
 void pic_initialize()
 {
@@ -46,7 +91,6 @@ void pic_initialize()
     The initialization of the PICs - remap the PICs' IRQ numbers. Done through a series of command words,
     which are being sent as Initialization Control Words (ICW).
     */
-    // install_irqs();
 
     // save state
     u8int a1, a2;

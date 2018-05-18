@@ -65,7 +65,7 @@ void install_int_handlers()
 
 isr_t get_int_handler(u8int n)
 {
-    if (n == 0) return 0;
+    if (n < 0 || n > 255) return 0;
     return interrupt_handlers[n];
 }
 

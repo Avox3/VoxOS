@@ -2,6 +2,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#define TRUE 1
+#define FALSE 0
+
 #define VIDEO_MEMORY_ADDRESS 0xb8000;
 
 #define SCREEN_ROWS 25
@@ -23,7 +26,6 @@
 #define LIGHT_MAGENTA 13
 #define LIGHT_BROWN 14
 #define WHITE 15
-
 
 // define some types for all platforms
 typedef unsigned int   u32int;

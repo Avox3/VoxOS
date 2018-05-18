@@ -45,7 +45,7 @@ load_kernel:
     push dx             ; Store DX on stack so later we can recall
                         ; how many sectors were request to be read ,
                         ; even if it is altered in the meantime
-		mov bx, KERNEL_ADDR
+	mov bx, KERNEL_ADDR
     mov ah, 2h       ; BIOS read sector function
     mov al, SECTORS         ; Read DH sectors
     mov ch, 0       ; Select cylinder 0
